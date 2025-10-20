@@ -1,0 +1,105 @@
+/* src/styles/dashboard.css */
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 28px 16px;
+  min-height: 80vh;
+  background: #f7f8fb;
+}
+
+.dashboard-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  padding: 22px;
+  width: 100%;
+  max-width: 920px;
+  box-sizing: border-box;
+}
+
+.auth-form h2 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+}
+
+.account-section {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.sub-status {
+  padding: 6px 10px;
+  background: #eef5ff;
+  border-radius: 6px;
+  color: #0b5fff;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.profile-form label,
+.password-form label {
+  display: block;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #243044;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e3e8ef;
+  margin-top: 6px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.actions-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.auth-button {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #0b5fff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.auth-button.alt {
+  background: #aaa;
+}
+
+.auth-button.danger {
+  background: #f55;
+}
+
+.auth-success {
+  background: #e6f9ef;
+  color: #0b7b3a;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.auth-error {
+  background: #ffe8e8;
+  color: #a40000;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #eef2f6;
+  margin: 18px 0;
+}
