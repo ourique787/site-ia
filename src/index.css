@@ -5,9 +5,13 @@
   font-family: "Poppins", sans-serif;
 }
 
-body {
-  min-height: 100vw;
-  width: 100vw;
+/* CORREÇÃO CRÍTICA: Garante 100% da altura do viewport (vh) e remove o scroll lateral (vw) */
+html, body {
+  min-height: 100vh; /* Usa a Altura da Viewport */
+  width: 100%;       /* Ocupa 100% da largura do pai (html) */
+  overflow-x: hidden; /* Remove barras de rolagem horizontais indesejadas */
+  
+  /* Mantém o background que você definiu */
   background: linear-gradient(180deg, #363467 0%, rgba(30, 29, 79, 0.8) 100%);
 }
 

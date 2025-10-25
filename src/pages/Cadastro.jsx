@@ -68,11 +68,9 @@ export default function Register() {
       const user = await waitForAuthMe(6, 200);
 
       // 2) dispare evento global para que AuthProvider atualize o estado
-      //    mesmo que waitForAuthMe falhe, ainda disparamos — mas preferimos disparar após confirmação
       window.dispatchEvent(new Event("auth-changed"));
 
       // 3) redireciona para a home ou dashboard
-      //    use "/dashboard" se preferir abrir painel; aqui seguimos sua escolha anterior -> home
       navigate("/", { replace: true });
     } catch (err) {
       console.error("Register error:", err);
@@ -83,7 +81,8 @@ export default function Register() {
   };
 
   return (
-    <div className="auth-container">
+    // ✨ ATUALIZAÇÃO: Usando a classe que define o layout de página cheia e o fundo escuro.
+    <div className="auth-page-container">
       <form className="auth-form" onSubmit={handleSubmit}>
         <h1 className="auth-title">Cadastre-se</h1>
         {error && <div className="auth-error">{error}</div>}

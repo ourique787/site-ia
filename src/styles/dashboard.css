@@ -1,105 +1,209 @@
-/* src/styles/dashboard.css */
+/* dashboard.css */
 
-.auth-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 28px 16px;
-  min-height: 80vh;
-  background: #f7f8fb;
+/* --- VARIÁVEIS (Apenas para referência, se você não tiver globais) --- */
+/*
+:root {
+    --bg-dark: #0f1724;
+    --card-dark: #1e293b;
+    --text-white: #e2e8f0;
+    --text-muted: #94a3b8;
+    --accent: #6366F1;
+    --success-color: #4ade80;
+    --error-color: #f87171;
+}
+*/
+
+/* 1. Contêiner de página cheia para o fundo escuro */
+.dashboard-page-container {
+    /* Garante que o container use a largura total e esconde o overflow (segurança) */
+    width: 100vw; 
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Estilo de fundo semelhante ao da Home */
+    background: linear-gradient(135deg, #0f1724 0%, #1a2332 100%);
+    color: #e2e8f0; 
+    padding: 20px;
 }
 
+/* 2. Estilização do Cartão Principal (Dashboard Card) */
 .dashboard-card {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-  padding: 22px;
-  width: 100%;
-  max-width: 920px;
-  box-sizing: border-box;
+    background: #1e293b; 
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 900px; /* Largura maior para dashboard */
+    display: flex;
+    flex-direction: column;
 }
 
-.auth-form h2 {
-  margin: 0 0 12px 0;
-  font-size: 20px;
+.dashboard-card h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 24px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #334155;
+    color: #fff;
 }
 
-.account-section {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 12px;
+.dashboard-card h3 {
+    font-size: 1.4rem;
+    color: #cbd5e1;
+    margin-top: 24px;
+    margin-bottom: 16px;
+}
+
+/* 3. Inputs, Labels e Mensagens */
+.dashboard-input {
+    background: #0f1724;
+    border: 1px solid #334155;
+    color: #e2e8f0;
+    padding: 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%; /* Garante que o input preencha a largura do card */
+}
+
+.dashboard-input:focus {
+    border-color: #6366F1;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+}
+
+.dashboard-input[readOnly] {
+    background: #111827; 
+    border-color: #0f1724;
+    color: #64748b;
+}
+
+.dashboard-label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #cbd5e1;
+}
+
+.dashboard-error {
+    background: #fecaca20;
+    color: #f87171;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-weight: 500;
+    border: 1px solid #dc2626;
+}
+
+.dashboard-success {
+    background: #22c55e30;
+    color: #4ade80;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-weight: 500;
+    border: 1px solid #4ade80;
+}
+
+/* 4. Botões e Ações */
+.dashboard-button {
+    background: linear-gradient(135deg, #635bff 0%, #4f46e5 100%);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    text-decoration: none; /* Para usar em <Link> */
+    display: inline-block;
+}
+
+.dashboard-button:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.dashboard-button:disabled {
+    background: #334155;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.dashboard-button.alt {
+    background: #334155;
+    color: #e2e8f0;
+}
+.dashboard-button.alt:hover {
+    background: #475569;
+    transform: none;
+    opacity: 1;
+}
+
+.dashboard-button.danger {
+    background: #dc2626;
+    color: white;
+}
+.dashboard-button.danger:hover {
+    background: #b91c1c;
+    opacity: 1;
+}
+
+/* 5. Layout e Estrutura */
+.actions-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    justify-content: flex-start;
+}
+
+.actions-row.bottom {
+    justify-content: space-between;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #334155;
 }
 
 .sub-status {
-  padding: 6px 10px;
-  background: #eef5ff;
-  border-radius: 6px;
-  color: #0b5fff;
-  font-weight: 600;
-  margin-left: 8px;
+    font-weight: 700;
+    color: #4ade80;
+    text-transform: capitalize;
+    margin-bottom: 24px;
 }
 
-.profile-form label,
-.password-form label {
-  display: block;
-  margin-top: 12px;
-  font-size: 13px;
-  color: #243044;
+.dashboard-card hr {
+    border: none;
+    border-top: 1px solid #334155;
+    margin: 30px 0;
 }
 
-.auth-input {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #e3e8ef;
-  margin-top: 6px;
-  box-sizing: border-box;
-  font-size: 14px;
+/* Media Query para telas menores */
+@media (max-width: 600px) {
+    .dashboard-card {
+        padding: 20px;
+    }
+    .actions-row {
+        flex-direction: column;
+    }
+    .dashboard-button {
+        width: 100%;
+    }
+}
+.sub-status-active {
+    font-weight: 700;
+    color: #4ade80; /* VERDE: Assinatura ativa */
+    text-transform: capitalize;
 }
 
-.actions-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.auth-button {
-  padding: 10px 14px;
-  border-radius: 8px;
-  background: #0b5fff;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.auth-button.alt {
-  background: #aaa;
-}
-
-.auth-button.danger {
-  background: #f55;
-}
-
-.auth-success {
-  background: #e6f9ef;
-  color: #0b7b3a;
-  padding: 8px 10px;
-  border-radius: 6px;
-  margin-bottom: 8px;
-}
-
-.auth-error {
-  background: #ffe8e8;
-  color: #a40000;
-  padding: 8px 10px;
-  border-radius: 6px;
-  margin-bottom: 8px;
-}
-
-hr {
-  border: none;
-  border-top: 1px solid #eef2f6;
-  margin: 18px 0;
+.sub-status-inactive {
+    font-weight: 700;
+    color: #f87171; /* VERMELHO: Assinatura inativa/cancelada */
+    text-transform: capitalize;
 }

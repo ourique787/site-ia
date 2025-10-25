@@ -4,7 +4,7 @@ import { useAuth } from "../App";
 import "../styles/header.css";
 
 export default function Header() {
-  const { user, setUser } = useAuth();
+  const auth = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -13,37 +13,117 @@ export default function Header() {
         method: "POST",
         credentials: "include",
       });
-      setUser(null);
-      window.dispatchEvent(new Event("auth-changed"));
-      navigate("/", { replace: true });
     } catch (e) {
-      console.error("Erro ao fazer logout:", e);
+      // ignore
     }
+    if (auth?.setUser) auth.setUser(null);
+    window.dispatchEvent(new Event("auth-changed"));
+    navigate("/");
+  };
+
+  // Verifica se o usuário tem assinatura ativa
+  const isSubscribed = auth?.user?.subscriptionStatus === "active";
+  
+  // Formata a data de término da assinatura
+  const formatEndDate = (date) => {
+    if (!date) return null;
+    return new Date(date).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
   };
 
   return (
-    <header className="main-header">
-      <div className="header-container">
-        <Link to="/" className="brand">
-          IA WhatsApp
-        </Link>
-
-        <nav className="nav-links">
-          {user ? (
+    <header style={{
+      background: "#0f1724", 
+      color: "#fff",
+      padding: "12px 0", 
+      borderBottom: "1px solid rgba(255,255,255,0.04)"
+    }}>
+      <div className="container" style={{ 
+        display: "flex", 
+        alignItems: "center", 
+        justifyContent: "space-between" 
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+          <Link to="/" style={{ 
+            color: "#fff", 
+            textDecoration: "none", 
+            fontWeight: 700, 
+            fontSize: 18 
+          }}>
+            IA Whatsapp
+          </Link>
+        </div>
+        
+        <nav style={{ display: "flex", gap: 14, alignItems: "center" }}>
+          {auth?.loading ? (
+            <div style={{ color: "#ddd" }}>Carregando...</div>
+          ) : auth?.user ? (
             <>
-              <Link to="/dashboard" className="nav-link">
+              <Link to="/dashboard" style={{ 
+                color: "#fff", 
+                textDecoration: "none" 
+              }}>
                 Dashboard
               </Link>
-              <button className="logout-btn" onClick={handleLogout}>
-                Logout
+              
+              {/* Mostra status da assinatura OU botão de assinar */}
+              {isSubscribed ? (
+                <span style={{
+                  color: "#4ade80",
+                  fontSize: 14,
+                  padding: "8px 12px",
+                  background: "rgba(74, 222, 128, 0.1)",
+                  borderRadius: 8,
+                  whiteSpace: "nowrap"
+                }}>
+                  {auth.user.subscriptionEndDate ? (
+                    <>✓ Assinante até {formatEndDate(auth.user.subscriptionEndDate)}</>
+                  ) : (
+                    <>✓ Assinante ativo</>
+                  )}
+                </span>
+              ) : (
+                <Link to="/compra" style={{
+                  background: "#0f1724",
+                  color: "#fff",
+                  padding: "8px 12px",
+                  borderRadius: 8,
+                  textDecoration: "none",
+                  border: "1px solid rgba(255,255,255,0.1)"
+                }}>
+                  Assinar
+                </Link>
+              )}
+
+              <button onClick={handleLogout} style={{
+                background: "transparent", 
+                color: "#fff", 
+                border: "1px solid rgba(255,255,255,0.08)",
+                padding: "6px 10px", 
+                borderRadius: 8, 
+                cursor: "pointer"
+              }}>
+                Sair
               </button>
             </>
           ) : (
             <>
-              <Link to="/login" className="nav-link">
+              <Link to="/login" style={{ 
+                color: "#fff", 
+                textDecoration: "none" 
+              }}>
                 Login
               </Link>
-              <Link to="/cadastro" className="nav-link">
+              <Link to="/cadastro" style={{
+                color: "#0f1724", 
+                background: "#fff", 
+                padding: "6px 10px", 
+                borderRadius: 8, 
+                textDecoration: "none"
+              }}>
                 Cadastro
               </Link>
             </>

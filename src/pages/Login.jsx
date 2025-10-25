@@ -54,7 +54,8 @@ export default function Login() {
   };
 
   return (
-    <div className="auth-container">
+    // ✨ Usando a nova classe para o contêiner de página cheia
+    <div className="auth-page-container">
       <form className="auth-form" onSubmit={handleLogin}>
         <h1 className="auth-title">Bem-vindo 👋</h1>
         <p className="auth-subtitle">Entre para continuar</p>

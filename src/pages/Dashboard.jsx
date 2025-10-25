@@ -1,7 +1,7 @@
-// src/frontend/Dashboard.jsx
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "../styles/dashboard.css";
+import { useNavigate, Link } from "react-router-dom";
+// Certifique-se de que este import está correto:
+import "../styles/dashboard.css"; 
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -20,6 +20,20 @@ export default function Dashboard() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
+  // Função para determinar a classe CSS do status (VERDE para ativa, VERMELHO para inativa)
+  const getSubscriptionStatusClass = (status) => {
+    // Normaliza para minúsculas para garantir a comparação
+    const normalizedStatus = status ? status.toLowerCase() : 'inativa';
+    
+    // Verifica se é 'active' ou 'ativa'
+    if (normalizedStatus === 'active' || normalizedStatus === 'ativa') {
+      return 'sub-status-active';
+    } else {
+      // Qualquer outra coisa (inativa, cancelada, etc.) é vermelha
+      return 'sub-status-inactive';
+    }
+  };
+
   useEffect(() => {
     let mounted = true;
 
@@ -27,20 +41,11 @@ export default function Dashboard() {
       setLoadingUser(true);
       setError(null);
       try {
-        console.debug("[Dashboard] fetching /auth/me...");
         const resp = await fetch("http://localhost:4000/auth/me", {
           credentials: "include",
         });
 
-        // debug info
-        console.debug("[Dashboard] /auth/me status:", resp.status);
-
         if (!resp.ok) {
-          // tenta ler a resposta para debug
-          let txt;
-          try { txt = await resp.text(); } catch { txt = "(no body)"; }
-          console.warn("[Dashboard] /auth/me não ok. body:", txt);
-          // se não autenticado redireciona
           navigate("/login");
           return;
         }
@@ -51,8 +56,6 @@ export default function Dashboard() {
         setName(data.user.name || "");
         setPhone(data.user.phone || "");
       } catch (e) {
-        console.error("[Dashboard] erro ao buscar /auth/me:", e);
-        // fallback: redireciona ao login para renovar credenciais
         navigate("/login");
       } finally {
         if (mounted) setLoadingUser(false);
@@ -74,6 +77,7 @@ export default function Dashboard() {
     } catch (e) {
       console.warn("logout failed", e);
     } finally {
+      window.dispatchEvent(new Event("auth-changed")); 
       navigate("/login");
     }
   };
@@ -100,7 +104,6 @@ export default function Dashboard() {
         setMessage("Perfil atualizado com sucesso.");
       }
     } catch (e) {
-      console.error("[Dashboard] handleSaveProfile error", e);
       setError("Erro de rede.");
     } finally {
       setSaving(false);
@@ -146,20 +149,25 @@ export default function Dashboard() {
         }, 1400);
       }
     } catch (e) {
-      console.error("[Dashboard] change password error", e);
       setError("Erro de rede.");
     } finally {
       setSaving(false);
     }
   };
 
-  if (loadingUser) return <div className="auth-container"><div className="auth-form">Carregando...</div></div>;
+  // Fallback de carregamento usando a classe de página cheia
+  const loadingFallback = (
+    <div className="dashboard-page-container">
+      <div className="dashboard-card" style={{ maxWidth: 400 }}>Carregando informações da conta...</div>
+    </div>
+  );
 
-  // fallback: se por algum motivo user é null mostre um aviso (evita branco)
+  if (loadingUser) return loadingFallback;
+
   if (!user) {
     return (
-      <div className="auth-container">
-        <div className="auth-form">
+      <div className="dashboard-page-container">
+        <div className="dashboard-card" style={{ maxWidth: 400 }}>
           <h2>Minha Conta</h2>
           <p>Usuário não encontrado. Redirecionando para login...</p>
         </div>
@@ -167,58 +175,114 @@ export default function Dashboard() {
     );
   }
 
+  // Define o status de subscrição para uso na renderização
+  const subStatus = user?.subscriptionStatus || "inativa";
+
   return (
-    <div className="auth-container dashboard-wrap">
-      <div className="auth-form dashboard-card" style={{ maxWidth: 900 }}>
+    // ✨ Usando as classes do dashboard.css
+    <div className="dashboard-page-container">
+      <div className="dashboard-card">
         <h2>Minha Conta</h2>
 
-        {error && <div className="auth-error" style={{ marginBottom: 12 }}>{error}</div>}
-        {message && <div className="auth-success" style={{ marginBottom: 12 }}>{message}</div>}
+        {error && <div className="dashboard-error">{error}</div>}
+        {message && <div className="dashboard-success">{message}</div>}
 
         <section className="account-section">
+          <strong>Email:</strong>
+          <div>{user?.email || "N/A"}</div>
           <strong>Assinatura:</strong>
-          <div className="sub-status">{user?.subscriptionStatus || "inativa"}</div>
+          {/* APLICANDO A CLASSE CONDICIONAL AQUI */}
+          <div className={getSubscriptionStatusClass(subStatus)}>
+            {subStatus}
+          </div>
         </section>
 
         <form onSubmit={handleSaveProfile} className="profile-form">
-          <label>Nome</label>
-          <input className="auth-input" value={name} onChange={(e) => setName(e.target.value)} />
+          <h3>Informações do Perfil</h3>
+          
+          <label htmlFor="name-input" className="dashboard-label">Nome</label>
+          <input 
+            className="dashboard-input" 
+            id="name-input"
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
+          />
 
-          <label>Email (não editável)</label>
-          <input className="auth-input" value={user?.email || ""} readOnly />
+          <label htmlFor="email-input" className="dashboard-label">Email (não editável)</label>
+          <input 
+            className="dashboard-input" 
+            id="email-input"
+            value={user?.email || ""} 
+            readOnly 
+          />
 
-          <label>Telefone</label>
-          <input className="auth-input" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <label htmlFor="phone-input" className="dashboard-label">Telefone</label>
+          <input 
+            className="dashboard-input" 
+            id="phone-input"
+            value={phone} 
+            onChange={(e) => setPhone(e.target.value)} 
+          />
 
           <div className="actions-row">
-            <button className="auth-button" type="submit" disabled={saving}>{saving ? "Salvando..." : "Salvar alterações"}</button>
-            <button type="button" className="auth-button alt" onClick={() => { setName(user?.name || ""); setPhone(user?.phone || ""); }}>Reverter</button>
+            <button className="dashboard-button" type="submit" disabled={saving}>
+              {saving ? "Salvando..." : "Salvar alterações"}
+            </button>
+            <button 
+              type="button" 
+              className="dashboard-button alt" 
+              onClick={() => { setName(user?.name || ""); setPhone(user?.phone || ""); }}
+            >
+              Reverter
+            </button>
           </div>
         </form>
 
         <hr />
 
         <form onSubmit={handleChangePassword} className="password-form">
-          <h3>Alterar senha</h3>
-          <label>Senha atual</label>
-          <input className="auth-input" type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+          <h3>Alterar Senha</h3>
+          
+          <label htmlFor="current-pass" className="dashboard-label">Senha atual</label>
+          <input 
+            className="dashboard-input" 
+            id="current-pass"
+            type="password" 
+            value={currentPassword} 
+            onChange={(e) => setCurrentPassword(e.target.value)} 
+          />
 
-          <label>Nova senha</label>
-          <input className="auth-input" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+          <label htmlFor="new-pass" className="dashboard-label">Nova senha</label>
+          <input 
+            className="dashboard-input" 
+            id="new-pass"
+            type="password" 
+            value={newPassword} 
+            onChange={(e) => setNewPassword(e.target.value)} 
+          />
 
-          <label>Confirme nova senha</label>
-          <input className="auth-input" type="password" value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} />
+          <label htmlFor="confirm-pass" className="dashboard-label">Confirme nova senha</label>
+          <input 
+            className="dashboard-input" 
+            id="confirm-pass"
+            type="password" 
+            value={confirmNewPassword} 
+            onChange={(e) => setConfirmNewPassword(e.target.value)} 
+          />
 
-          <div className="actions-row" style={{ marginTop: 12 }}>
-            <button className="auth-button" type="submit" disabled={saving}>{saving ? "Atualizando..." : "Alterar senha"}</button>
+          <div className="actions-row">
+            <button className="dashboard-button" type="submit" disabled={saving}>
+              {saving ? "Atualizando..." : "Alterar senha"}
+            </button>
           </div>
         </form>
 
         <hr />
 
         <div className="actions-row bottom">
-          <button className="auth-button danger" onClick={handleLogout}>Sair</button>
-          <button className="auth-button" onClick={() => navigate("/")}>Voltar ao site</button>
+          <button className="dashboard-button danger" onClick={handleLogout}>Sair</button>
+          {/* Usamos o componente Link e a classe de botão para estilo */}
+          <Link to="/" className="dashboard-button alt">Voltar ao site</Link> 
         </div>
       </div>
     </div>

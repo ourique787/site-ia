@@ -1,3 +1,4 @@
+/* home.css */
 :root{
   --prim: #4F46E5;
   --prim-2: #6366F1;
@@ -7,16 +8,31 @@
   --muted: #6B7280;
 }
 
-*{box-sizing:border-box}
-body, html, #root { height: 100%; margin: 0; font-family: Inter, Arial, sans-serif; color:var(--text); background:var(--bg); }
+/* Garante que padding e border estejam dentro da largura/altura */
+*{
+  box-sizing:border-box;
+}
 
+body, html, #root { 
+  height: 100%; 
+  margin: 0; 
+  font-family: Inter, Arial, sans-serif; 
+  color:var(--text); 
+  background:var(--bg); 
+  /* CORREÇÃO PRINCIPAL: Esconde qualquer conteúdo que exceda a largura horizontal */
+  overflow-x: hidden; 
+  /* Garante que a largura total seja a da tela */
+  width: 100%; 
+}
+
+
+/* --- SEÇÕES E CONTAINERS (Mantidos do original) --- */
 
 .container{
   width: 92%;
   max-width: 1100px;
   margin: 0 auto;
 }
-
 
 .hero-header {
   background: linear-gradient(90deg, var(--prim), var(--prim-2));
@@ -121,21 +137,21 @@ body, html, #root { height: 100%; margin: 0; font-family: Inter, Arial, sans-ser
 
 @media (max-width: 1200px){
   .hero-title { font-size:1.8rem; }
-  .feature-grid { grid-template-columns: repeat(3,1fr); } /* 3 colunas */
+  .feature-grid { grid-template-columns: repeat(3,1fr); } 
 }
 
 /* --- Tablets (até 900px) --- */
 @media (max-width: 900px){
   .hero { flex-direction:column; text-align:center; padding:36px 0; }
   .hero-actions { justify-content:center; }
-  .feature-grid { grid-template-columns:repeat(2,1fr); } /* 2 colunas */
+  .feature-grid { grid-template-columns:repeat(2,1fr); } 
   .pricing { flex-direction:column; align-items:center; }
 }
 
 /* --- Celulares médios (até 520px) --- */
 @media (max-width: 520px){
-  .feature-grid { grid-template-columns:1fr; } /* 1 coluna */
-  .nav { display:none; } /* esconder menu no mobile */
+  .feature-grid { grid-template-columns:1fr; } 
+  .nav { display:none; } 
   .brand{ font-size:1rem; }
   .hero-title { font-size:1.6rem; }
 }
@@ -144,7 +160,6 @@ body, html, #root { height: 100%; margin: 0; font-family: Inter, Arial, sans-ser
 @media (max-width: 480px){
   .hero-sub { font-size:0.9rem; }
   .cta-primary, .cta-outline {
-    width:100%; text-align:center; /* botões ocupam toda largura */
+    width:100%; text-align:center; 
   }
 }
-
