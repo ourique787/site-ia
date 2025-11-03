@@ -1,5 +1,4 @@
 /* styles/auth.css */
-
 /* VARIÁVEIS DE COR (Caso precise, se não use as do home.css)
 :root {
     --bg-dark: #0f1724;
@@ -129,10 +128,69 @@
     text-decoration: underline;
 }
 
+/* 6. Estilos para o campo de telefone com seletor de país */
+.phone-input-group {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.country-select {
+    background: #0f1724;
+    border: 1px solid #334155;
+    color: #e2e8f0;
+    padding: 14px 12px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 140px; /* Largura fixa maior para acomodar bandeira + código */
+    flex-shrink: 0;
+    appearance: none; /* Remove estilo padrão do navegador */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px; /* Espaço para a seta */
+}
+
+.country-select:focus {
+    border-color: #6366F1;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+}
+
+.country-select option {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 10px;
+    font-size: 0.95rem;
+}
+
+.phone-input {
+    flex: 1;
+    margin-bottom: 0 !important; /* Remove a margem padrão quando dentro do grupo */
+    min-width: 0; /* Permite que o input encolha se necessário */
+}
+
 /* Estilo para telas menores */
 @media (max-width: 500px) {
     .auth-form {
         padding: 30px 20px;
         margin: 0 10px;
+    }
+    
+    .phone-input-group {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .country-select {
+        margin-bottom: 16px;
+        width: 100%;
+    }
+    
+    .phone-input {
+        margin-bottom: 16px !important;
     }
 }

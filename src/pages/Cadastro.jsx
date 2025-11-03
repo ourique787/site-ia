@@ -3,9 +3,26 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/auth.css";
 
+// Lista de países com códigos mais comuns
+const COUNTRY_CODES = [
+  { code: "+55", country: "BR", flag: "🇧🇷", name: "Brasil" },
+  { code: "+1", country: "US", flag: "🇺🇸", name: "EUA/Canadá" },
+  { code: "+54", country: "AR", flag: "🇦🇷", name: "Argentina" },
+  { code: "+56", country: "CL", flag: "🇨🇱", name: "Chile" },
+  { code: "+57", country: "CO", flag: "🇨🇴", name: "Colômbia" },
+  { code: "+52", country: "MX", flag: "🇲🇽", name: "México" },
+  { code: "+351", country: "PT", flag: "🇵🇹", name: "Portugal" },
+  { code: "+34", country: "ES", flag: "🇪🇸", name: "Espanha" },
+  { code: "+44", country: "GB", flag: "🇬🇧", name: "Reino Unido" },
+  { code: "+33", country: "FR", flag: "🇫🇷", name: "França" },
+  { code: "+49", country: "DE", flag: "🇩🇪", name: "Alemanha" },
+  { code: "+39", country: "IT", flag: "🇮🇹", name: "Itália" },
+];
+
 export default function Register() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [countryCode, setCountryCode] = useState("+55"); // Padrão Brasil
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -15,9 +32,9 @@ export default function Register() {
 
   const validarEmail = (email) =>
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
-  const validarPhone = (p) => /^\+?[0-9\s\-()]{6,20}$/.test(p);
+  
+  const validarPhone = (p) => /^[0-9\s\-()]{6,20}$/.test(p);
 
-  // tenta obter /auth/me algumas vezes para garantir que o cookie httpOnly foi aplicado
   async function waitForAuthMe(retries = 5, delayMs = 200) {
     for (let i = 0; i < retries; i++) {
       try {
@@ -31,7 +48,6 @@ export default function Register() {
       } catch (e) {
         // ignore e tenta novamente
       }
-      // espera antes de tentar novamente (backoff linear)
       await new Promise((r) => setTimeout(r, delayMs));
       delayMs = Math.min(1000, delayMs * 1.8);
     }
@@ -50,11 +66,14 @@ export default function Register() {
 
     setLoading(true);
     try {
+      // Concatena o código do país com o telefone
+      const fullPhone = countryCode + phone;
+      
       const resp = await fetch("http://localhost:4000/auth/register", {
         method: "POST",
-        credentials: "include", // importante para receber cookie httpOnly
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, phone, name }),
+        body: JSON.stringify({ email, password, phone: fullPhone, name }),
       });
 
       const data = await resp.json().catch(() => ({}));
@@ -64,13 +83,8 @@ export default function Register() {
         return;
       }
 
-      // 1) tenta confirmar a sessão no backend (p/ garantir que cookie foi aplicado)
       const user = await waitForAuthMe(6, 200);
-
-      // 2) dispare evento global para que AuthProvider atualize o estado
       window.dispatchEvent(new Event("auth-changed"));
-
-      // 3) redireciona para a home ou dashboard
       navigate("/", { replace: true });
     } catch (err) {
       console.error("Register error:", err);
@@ -81,7 +95,6 @@ export default function Register() {
   };
 
   return (
-    // ✨ ATUALIZAÇÃO: Usando a classe que define o layout de página cheia e o fundo escuro.
     <div className="auth-page-container">
       <form className="auth-form" onSubmit={handleSubmit}>
         <h1 className="auth-title">Cadastre-se</h1>
@@ -104,14 +117,29 @@ export default function Register() {
           required
         />
 
-        <input
-          className="auth-input"
-          type="tel"
-          placeholder="Telefone (ex: +5511999999999)"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          required
-        />
+        {/* Campo de telefone com seletor de país */}
+        <div className="phone-input-group">
+          <select
+            className="country-select"
+            value={countryCode}
+            onChange={(e) => setCountryCode(e.target.value)}
+          >
+            {COUNTRY_CODES.map((country) => (
+              <option key={country.code} value={country.code}>
+                {country.flag} {country.code}
+              </option>
+            ))}
+          </select>
+          
+          <input
+            className="auth-input phone-input"
+            type="tel"
+            placeholder="51999999999"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+          />
+        </div>
 
         <input
           className="auth-input"

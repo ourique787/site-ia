@@ -1,7 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-// Certifique-se de que este import está correto:
 import "../styles/dashboard.css"; 
+
+// Lista de países com códigos mais comuns
+const COUNTRY_CODES = [
+  { code: "+55", country: "BR", flag: "🇧🇷", name: "Brasil" },
+  { code: "+1", country: "US", flag: "🇺🇸", name: "EUA/Canadá" },
+  { code: "+54", country: "AR", flag: "🇦🇷", name: "Argentina" },
+  { code: "+56", country: "CL", flag: "🇨🇱", name: "Chile" },
+  { code: "+57", country: "CO", flag: "🇨🇴", name: "Colômbia" },
+  { code: "+52", country: "MX", flag: "🇲🇽", name: "México" },
+  { code: "+351", country: "PT", flag: "🇵🇹", name: "Portugal" },
+  { code: "+34", country: "ES", flag: "🇪🇸", name: "Espanha" },
+  { code: "+44", country: "GB", flag: "🇬🇧", name: "Reino Unido" },
+  { code: "+33", country: "FR", flag: "🇫🇷", name: "França" },
+  { code: "+49", country: "DE", flag: "🇩🇪", name: "Alemanha" },
+  { code: "+39", country: "IT", flag: "🇮🇹", name: "Itália" },
+];
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -13,6 +28,7 @@ export default function Dashboard() {
 
   // form state
   const [name, setName] = useState("");
+  const [countryCode, setCountryCode] = useState("+55");
   const [phone, setPhone] = useState("");
 
   // password change
@@ -20,16 +36,31 @@ export default function Dashboard() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
-  // Função para determinar a classe CSS do status (VERDE para ativa, VERMELHO para inativa)
+  // Função para extrair código do país e número do telefone completo
+  const parsePhoneNumber = (fullPhone) => {
+    if (!fullPhone) return { code: "+55", number: "" };
+    
+    // Procura qual código do país corresponde
+    const matchedCountry = COUNTRY_CODES.find(c => fullPhone.startsWith(c.code));
+    
+    if (matchedCountry) {
+      return {
+        code: matchedCountry.code,
+        number: fullPhone.substring(matchedCountry.code.length)
+      };
+    }
+    
+    // Se não encontrou, assume que é o número todo
+    return { code: "+55", number: fullPhone };
+  };
+
+  // Função para determinar a classe CSS do status
   const getSubscriptionStatusClass = (status) => {
-    // Normaliza para minúsculas para garantir a comparação
     const normalizedStatus = status ? status.toLowerCase() : 'inativa';
     
-    // Verifica se é 'active' ou 'ativa'
     if (normalizedStatus === 'active' || normalizedStatus === 'ativa') {
       return 'sub-status-active';
     } else {
-      // Qualquer outra coisa (inativa, cancelada, etc.) é vermelha
       return 'sub-status-inactive';
     }
   };
@@ -54,7 +85,11 @@ export default function Dashboard() {
         if (!mounted) return;
         setUser(data.user);
         setName(data.user.name || "");
-        setPhone(data.user.phone || "");
+        
+        // Separa o código do país e o número
+        const parsed = parsePhoneNumber(data.user.phone || "");
+        setCountryCode(parsed.code);
+        setPhone(parsed.number);
       } catch (e) {
         navigate("/login");
       } finally {
@@ -89,11 +124,14 @@ export default function Dashboard() {
     setSaving(true);
 
     try {
+      // Concatena código do país + número
+      const fullPhone = phone ? countryCode + phone : undefined;
+      
       const resp = await fetch("http://localhost:4000/auth/me", {
         method: "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name || undefined, phone: phone || undefined }),
+        body: JSON.stringify({ name: name || undefined, phone: fullPhone }),
       });
 
       const data = await resp.json();
@@ -155,7 +193,13 @@ export default function Dashboard() {
     }
   };
 
-  // Fallback de carregamento usando a classe de página cheia
+  const handleRevert = () => {
+    setName(user?.name || "");
+    const parsed = parsePhoneNumber(user?.phone || "");
+    setCountryCode(parsed.code);
+    setPhone(parsed.number);
+  };
+
   const loadingFallback = (
     <div className="dashboard-page-container">
       <div className="dashboard-card" style={{ maxWidth: 400 }}>Carregando informações da conta...</div>
@@ -175,11 +219,9 @@ export default function Dashboard() {
     );
   }
 
-  // Define o status de subscrição para uso na renderização
   const subStatus = user?.subscriptionStatus || "inativa";
 
   return (
-    // ✨ Usando as classes do dashboard.css
     <div className="dashboard-page-container">
       <div className="dashboard-card">
         <h2>Minha Conta</h2>
@@ -191,7 +233,6 @@ export default function Dashboard() {
           <strong>Email:</strong>
           <div>{user?.email || "N/A"}</div>
           <strong>Assinatura:</strong>
-          {/* APLICANDO A CLASSE CONDICIONAL AQUI */}
           <div className={getSubscriptionStatusClass(subStatus)}>
             {subStatus}
           </div>
@@ -217,12 +258,28 @@ export default function Dashboard() {
           />
 
           <label htmlFor="phone-input" className="dashboard-label">Telefone</label>
-          <input 
-            className="dashboard-input" 
-            id="phone-input"
-            value={phone} 
-            onChange={(e) => setPhone(e.target.value)} 
-          />
+          <div className="phone-input-group">
+            <select
+              className="country-select"
+              value={countryCode}
+              onChange={(e) => setCountryCode(e.target.value)}
+            >
+              {COUNTRY_CODES.map((country) => (
+                <option key={country.code} value={country.code}>
+                  {country.flag} {country.code}
+                </option>
+              ))}
+            </select>
+            
+            <input 
+              className="dashboard-input phone-input" 
+              id="phone-input"
+              type="tel"
+              placeholder="11 99999-9999"
+              value={phone} 
+              onChange={(e) => setPhone(e.target.value)} 
+            />
+          </div>
 
           <div className="actions-row">
             <button className="dashboard-button" type="submit" disabled={saving}>
@@ -231,7 +288,7 @@ export default function Dashboard() {
             <button 
               type="button" 
               className="dashboard-button alt" 
-              onClick={() => { setName(user?.name || ""); setPhone(user?.phone || ""); }}
+              onClick={handleRevert}
             >
               Reverter
             </button>
@@ -281,7 +338,6 @@ export default function Dashboard() {
 
         <div className="actions-row bottom">
           <button className="dashboard-button danger" onClick={handleLogout}>Sair</button>
-          {/* Usamos o componente Link e a classe de botão para estilo */}
           <Link to="/" className="dashboard-button alt">Voltar ao site</Link> 
         </div>
       </div>
