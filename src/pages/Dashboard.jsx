@@ -18,10 +18,13 @@ const COUNTRY_CODES = [
   { code: "+39", country: "IT", flag: "🇮🇹", name: "Itália" },
 ];
 
+const WHATSAPP_LINK = "https://wa.me/555198778332?text=Ol%C3%A1!%20Acabei%20de%20assinar%20a%20IA%20Assistente%20Whatsapp!%20Vou%20estar%20salvando%20o%20n%C3%BAmero%20aqui%20pra%20utilizar%20todas%20as%20funcionalidades!";
+
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [canceling, setCanceling] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -40,7 +43,6 @@ export default function Dashboard() {
   const parsePhoneNumber = (fullPhone) => {
     if (!fullPhone) return { code: "+55", number: "" };
     
-    // Procura qual código do país corresponde
     const matchedCountry = COUNTRY_CODES.find(c => fullPhone.startsWith(c.code));
     
     if (matchedCountry) {
@@ -50,8 +52,25 @@ export default function Dashboard() {
       };
     }
     
-    // Se não encontrou, assume que é o número todo
     return { code: "+55", number: fullPhone };
+  };
+
+  // Função para formatar data de expiração
+  const formatExpirationDate = (dateString) => {
+    if (!dateString) return "N/A";
+    
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (e) {
+      return "N/A";
+    }
   };
 
   // Função para determinar a classe CSS do status
@@ -86,7 +105,6 @@ export default function Dashboard() {
         setUser(data.user);
         setName(data.user.name || "");
         
-        // Separa o código do país e o número
         const parsed = parsePhoneNumber(data.user.phone || "");
         setCountryCode(parsed.code);
         setPhone(parsed.number);
@@ -124,7 +142,6 @@ export default function Dashboard() {
     setSaving(true);
 
     try {
-      // Concatena código do país + número
       const fullPhone = phone ? countryCode + phone : undefined;
       
       const resp = await fetch("http://localhost:4000/auth/me", {
@@ -193,6 +210,44 @@ export default function Dashboard() {
     }
   };
 
+  const handleCancelSubscription = async () => {
+    const confirmed = window.confirm(
+      "Tem certeza que deseja cancelar a renovação automática? Sua assinatura continuará ativa até o fim do período pago."
+    );
+    
+    if (!confirmed) return;
+
+    setCanceling(true);
+    setError(null);
+    setMessage(null);
+
+    try {
+      const resp = await fetch("http://localhost:4000/subscription/cancel", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      const data = await resp.json();
+      
+      if (!resp.ok) {
+        setError(data.error || "Erro ao cancelar renovação");
+      } else {
+        setMessage(data.message || "Renovação automática cancelada com sucesso.");
+        const meResp = await fetch("http://localhost:4000/auth/me", {
+          credentials: "include",
+        });
+        if (meResp.ok) {
+          const meData = await meResp.json();
+          setUser(meData.user);
+        }
+      }
+    } catch (e) {
+      setError("Erro de rede ao cancelar renovação.");
+    } finally {
+      setCanceling(false);
+    }
+  };
+
   const handleRevert = () => {
     setName(user?.name || "");
     const parsed = parsePhoneNumber(user?.phone || "");
@@ -220,6 +275,8 @@ export default function Dashboard() {
   }
 
   const subStatus = user?.subscriptionStatus || "inativa";
+  const isActive = subStatus.toLowerCase() === 'active' || subStatus.toLowerCase() === 'ativa';
+  const willRenew = !user?.subscriptionCancelAtPeriodEnd;
 
   return (
     <div className="dashboard-page-container">
@@ -232,10 +289,95 @@ export default function Dashboard() {
         <section className="account-section">
           <strong>Email:</strong>
           <div>{user?.email || "N/A"}</div>
+          
           <strong>Assinatura:</strong>
           <div className={getSubscriptionStatusClass(subStatus)}>
-            {subStatus}
+            {subStatus === 'active' ? 'Ativa' : subStatus === 'inactive' ? 'Inativa' : subStatus}
           </div>
+
+          {/* Mostra data de expiração se tiver assinatura ativa */}
+          {isActive && user?.subscriptionEndDate && (
+            <>
+              <strong>Expira em:</strong>
+              <div className="expiration-date">
+                {formatExpirationDate(user.subscriptionEndDate)}
+              </div>
+            </>
+          )}
+
+          {/* 🔥 LINK WHATSAPP - SÓ PARA ASSINANTES ATIVOS */}
+          {isActive && (
+            <>
+              <strong>Conecte-se com a IA:</strong>
+              <div style={{ marginTop: '0.5rem' }}>
+                <a 
+                  href={WHATSAPP_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    padding: '0.6rem 1.2rem',
+                    backgroundColor: '#25D366',
+                    color: 'white',
+                    textDecoration: 'none',
+                    fontWeight: '500',
+                    fontSize: '0.95rem',
+                    borderRadius: '6px',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#20BA5A'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#25D366'}
+                >
+                  <span style={{ fontSize: '1.2rem' }}>📱</span>
+                  Iniciar conversa no WhatsApp
+                </a>
+              </div>
+            </>
+          )}
+
+          {/* Mostra status da renovação automática */}
+          {isActive && (
+            <>
+              <strong>Renovação automática:</strong>
+              <div className={willRenew ? "renewal-active" : "renewal-canceled"}>
+                {willRenew ? "✓ Ativa" : "✗ Cancelada"}
+              </div>
+            </>
+          )}
+
+          {/* Botão para cancelar renovação (só aparece se estiver ativa e vai renovar) */}
+          {isActive && willRenew && (
+            <div className="subscription-actions" style={{ marginTop: '1rem' }}>
+              <button 
+                className="dashboard-button danger small" 
+                onClick={handleCancelSubscription}
+                disabled={canceling}
+              >
+                {canceling ? "Processando..." : "Cancelar Renovação Automática"}
+              </button>
+              <p className="cancel-note" style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.5rem' }}>
+                Sua assinatura continuará ativa até {formatExpirationDate(user.subscriptionEndDate)}
+              </p>
+            </div>
+          )}
+
+          {/* Aviso se renovação foi cancelada */}
+          {isActive && !willRenew && (
+            <div className="subscription-info" style={{ 
+              marginTop: '1rem', 
+              padding: '1rem', 
+              backgroundColor: '#fff3cd', 
+              borderRadius: '4px',
+              border: '1px solid #ffc107'
+            }}>
+              <p style={{ margin: 0, color: '#856404' }}>
+                ⚠️ Sua renovação automática está cancelada. A assinatura expirará em {formatExpirationDate(user.subscriptionEndDate)}
+              </p>
+            </div>
+          )}
         </section>
 
         <form onSubmit={handleSaveProfile} className="profile-form">
