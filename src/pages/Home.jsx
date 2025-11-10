@@ -166,7 +166,7 @@ export default function Home() {
                 Começar agora →
               </Link>
 
-              <Link to="/login" style={outlineButtonStyle}
+              <Link to={authed ? "/dashboard" : "/login"} style={outlineButtonStyle}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)";
                   e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
