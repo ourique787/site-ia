@@ -179,6 +179,7 @@ export default function Home() {
               </Link>
             </div>
 
+
             {/* Stats */}
             <div style={{
               display: "grid",

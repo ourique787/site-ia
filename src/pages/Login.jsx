@@ -25,7 +25,7 @@ export default function Login() {
 
     setLoading(true);
     try {
-      const resp = await fetch("http://localhost:4000/auth/login", {
+      const resp = await fetch("https://projeto-ia-a28p.onrender.com/auth/login", {
         method: "POST",
         credentials: "include", // para o cookie httpOnly
         headers: { "Content-Type": "application/json" },

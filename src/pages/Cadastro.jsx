@@ -38,7 +38,7 @@ export default function Register() {
   async function waitForAuthMe(retries = 5, delayMs = 200) {
     for (let i = 0; i < retries; i++) {
       try {
-        const resp = await fetch("http://localhost:4000/auth/me", {
+        const resp = await fetch("https://projeto-ia-a28p.onrender.com/auth/me", {
           credentials: "include",
         });
         if (resp.ok) {
@@ -69,7 +69,7 @@ export default function Register() {
       // Concatena o código do país com o telefone
       const fullPhone = countryCode + phone;
       
-      const resp = await fetch("http://localhost:4000/auth/register", {
+      const resp = await fetch("https://projeto-ia-a28p.onrender.com/auth/register", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
