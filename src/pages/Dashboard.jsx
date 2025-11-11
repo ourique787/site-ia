@@ -91,7 +91,7 @@ export default function Dashboard() {
       setLoadingUser(true);
       setError(null);
       try {
-        const resp = await fetch("http://localhost:4000/auth/me", {
+        const resp = await fetch("https://projeto-ia-a28p.onrender.com/auth/me", {
           credentials: "include",
         });
 
@@ -123,7 +123,7 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:4000/auth/logout", {
+      await fetch("https://projeto-ia-a28p.onrender.com/logout", {
         method: "POST",
         credentials: "include",
       });
@@ -144,7 +144,7 @@ export default function Dashboard() {
     try {
       const fullPhone = phone ? countryCode + phone : undefined;
       
-      const resp = await fetch("http://localhost:4000/auth/me", {
+      const resp = await fetch("https://projeto-ia-a28p.onrender.com/auth/me", {
         method: "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -186,7 +186,7 @@ export default function Dashboard() {
 
     setSaving(true);
     try {
-      const resp = await fetch("http://localhost:4000/auth/me", {
+      const resp = await fetch("https://projeto-ia-a28p.onrender.com/auth/me", {
         method: "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -199,7 +199,7 @@ export default function Dashboard() {
       } else {
         setMessage("Senha alterada com sucesso. Faça login novamente.");
         setTimeout(async () => {
-          try { await fetch("http://localhost:4000/auth/logout", { method: "POST", credentials: "include" }); } catch {}
+          try { await fetch("https://projeto-ia-a28p.onrender.com/auth/logout", { method: "POST", credentials: "include" }); } catch {}
           navigate("/login");
         }, 1400);
       }
@@ -222,7 +222,7 @@ export default function Dashboard() {
     setMessage(null);
 
     try {
-      const resp = await fetch("http://localhost:4000/subscription/cancel", {
+      const resp = await fetch("https://projeto-ia-a28p.onrender.com/subscription/cancel", {
         method: "POST",
         credentials: "include",
       });
@@ -233,7 +233,7 @@ export default function Dashboard() {
         setError(data.error || "Erro ao cancelar renovação");
       } else {
         setMessage(data.message || "Renovação automática cancelada com sucesso.");
-        const meResp = await fetch("http://localhost:4000/auth/me", {
+        const meResp = await fetch("https://projeto-ia-a28p.onrender.com/auth/me", {
           credentials: "include",
         });
         if (meResp.ok) {

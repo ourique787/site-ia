@@ -9,7 +9,7 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:4000/auth/logout", {
+      await fetch("https://projeto-ia-a28p.onrender.com/auth/logout", {
         method: "POST",
         credentials: "include",
       });

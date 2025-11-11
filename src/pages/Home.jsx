@@ -10,7 +10,7 @@ export default function Home() {
     let mounted = true;
     async function check() {
       try {
-        const resp = await fetch("http://localhost:4000/auth/me", { credentials: "include" });
+        const resp = await fetch("https://projeto-ia-a28p.onrender.com/auth/me", { credentials: "include" });
         if (!mounted) return;
         setAuthed(resp.ok);
       } catch (e) {

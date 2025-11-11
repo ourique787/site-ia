@@ -27,7 +27,7 @@ export default function Compra() {
     
     try {
       // O URL da sua API de backend
-      const resp = await fetch("http://localhost:4000/auth/create-checkout-session", {
+      const resp = await fetch("https://projeto-ia-a28p.onrender.com/auth/create-checkout-session", {
         method: "POST",
         credentials: "include", // importante: envia cookies httpOnly
         headers: { "Content-Type": "application/json" },

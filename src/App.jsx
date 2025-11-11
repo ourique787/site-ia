@@ -23,7 +23,7 @@ function AuthProvider({ children }) {
     let mounted = true;
     const checkAuth = async () => {
       try {
-        const res = await fetch("http://localhost:4000/auth/me", {
+        const res = await fetch("https://projeto-ia-a28p.onrender.com/auth/me", {
           credentials: "include",
         });
         if (res.ok) {
