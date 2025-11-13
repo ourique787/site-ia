@@ -18,15 +18,22 @@ export const useAuth = () => useContext(AuthContext);
 
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let mounted = true;
     const checkAuth = async () => {
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
         const res = await fetch("https://projeto-ia-a28p.onrender.com/auth/me", {
           credentials: "include",
+          signal: controller.signal,
         });
+        
+        clearTimeout(timeoutId);
+        
         if (res.ok) {
           const data = await res.json();
           if (mounted) setUser(data.user);
@@ -34,12 +41,16 @@ function AuthProvider({ children }) {
           if (mounted) setUser(null);
         }
       } catch (err) {
-        console.error("Erro ao verificar sessão:", err);
+        if (err.name !== 'AbortError') {
+          console.error("Erro ao verificar sessão:", err);
+        }
         if (mounted) setUser(null);
       } finally {
         if (mounted) setLoading(false);
       }
     };
+    
+    setLoading(true);
     checkAuth();
 
     const onAuthChanged = () => {

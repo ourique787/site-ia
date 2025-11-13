@@ -55,9 +55,7 @@ export default function Header() {
         </div>
         
         <nav style={{ display: "flex", gap: 14, alignItems: "center" }}>
-          {auth?.loading ? (
-            <div style={{ color: "#ddd" }}>Carregando...</div>
-          ) : auth?.user ? (
+          {auth?.user ? (
             <>
               <Link to="/dashboard" style={{ 
                 color: "#fff", 
