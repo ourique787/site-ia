@@ -1,4 +1,3 @@
-// Dentro de /src/components/CheckoutForm/CheckoutForm.jsx
 import React, { useState } from 'react';
 import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import './CheckoutForm.css';
@@ -22,7 +21,6 @@ export default function CheckoutForm() {
         const { error } = await stripe.confirmPayment({
             elements,
             confirmParams: {
-                // URL para onde o cliente será redirecionado após o pagamento
                 return_url: `${window.location.origin}/completion`,
             },
         });
@@ -44,7 +42,6 @@ export default function CheckoutForm() {
                     {isProcessing ? "Processando..." : "Pagar Agora"}
                 </span>
             </button>
-            {/* Mostra mensagens de erro */}
             {message && <div id="payment-message">{message}</div>}
         </form>
     );

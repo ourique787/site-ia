@@ -1,9 +1,7 @@
-// src/pages/Register.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/auth.css";
 
-// Lista de países com códigos mais comuns
 const COUNTRY_CODES = [
   { code: "+55", country: "BR", flag: "🇧🇷", name: "Brasil" },
   { code: "+1", country: "US", flag: "🇺🇸", name: "EUA/Canadá" },
@@ -22,7 +20,7 @@ const COUNTRY_CODES = [
 export default function Register() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const [countryCode, setCountryCode] = useState("+55"); // Padrão Brasil
+  const [countryCode, setCountryCode] = useState("+55");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -46,7 +44,6 @@ export default function Register() {
           if (data && data.user) return data.user;
         }
       } catch (e) {
-        // ignore e tenta novamente
       }
       await new Promise((r) => setTimeout(r, delayMs));
       delayMs = Math.min(1000, delayMs * 1.8);
@@ -66,7 +63,6 @@ export default function Register() {
 
     setLoading(true);
     try {
-      // Concatena o código do país com o telefone
       const fullPhone = countryCode + phone;
       
       const resp = await fetch("https://projeto-ia-a28p.onrender.com/auth/register", {
@@ -117,7 +113,6 @@ export default function Register() {
           required
         />
 
-        {/* Campo de telefone com seletor de país */}
         <div className="phone-input-group">
           <select
             className="country-select"

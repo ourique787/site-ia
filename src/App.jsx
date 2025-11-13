@@ -42,7 +42,6 @@ function AuthProvider({ children }) {
     };
     checkAuth();
 
-    // atualiza quando login/logout acontecem
     const onAuthChanged = () => {
       checkAuth();
     };
@@ -81,7 +80,6 @@ function App() {
           <Route path="/resetar-senha/:token" element={<ResetarSenha />} />
           <Route path="/login" element={<Login />} />
 
-          {/* Compra — rota protegida */}
           <Route
             path="/compra"
             element={
@@ -100,7 +98,6 @@ function App() {
             }
           />
 
-          {/* Rota de sucesso após pagamento Stripe */}
           <Route
             path="/success"
             element={

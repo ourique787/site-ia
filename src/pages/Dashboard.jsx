@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import "../styles/dashboard.css"; 
 
-// Lista de países com códigos mais comuns
 const COUNTRY_CODES = [
   { code: "+55", country: "BR", flag: "🇧🇷", name: "Brasil" },
   { code: "+1", country: "US", flag: "🇺🇸", name: "EUA/Canadá" },
@@ -30,17 +29,14 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // form state
   const [name, setName] = useState("");
   const [countryCode, setCountryCode] = useState("+55");
   const [phone, setPhone] = useState("");
 
-  // password change
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
-  // Função para extrair código do país e número do telefone completo
   const parsePhoneNumber = (fullPhone) => {
     if (!fullPhone) return { code: "+55", number: "" };
     
@@ -56,7 +52,6 @@ export default function Dashboard() {
     return { code: "+55", number: fullPhone };
   };
 
-  // Função para formatar data de expiração
   const formatExpirationDate = (dateString) => {
     if (!dateString) return "N/A";
     
@@ -74,7 +69,6 @@ export default function Dashboard() {
     }
   };
 
-  // Função para determinar a classe CSS do status
   const getSubscriptionStatusClass = (status) => {
     const normalizedStatus = status ? status.toLowerCase() : 'inativa';
     
@@ -116,10 +110,8 @@ export default function Dashboard() {
       }
     }
 
-    // Verifica se há mensagem de sucesso vinda do redirecionamento
     if (location.state?.message) {
       setMessage(location.state.message);
-      // Limpa o state para não mostrar a mensagem novamente ao navegar
       window.history.replaceState({}, document.title);
     }
 
@@ -303,7 +295,6 @@ export default function Dashboard() {
             {subStatus === 'active' ? 'Ativa' : subStatus === 'inactive' ? 'Inativa' : subStatus}
           </div>
 
-          {/* Mostra data de expiração se tiver assinatura ativa */}
           {isActive && user?.subscriptionEndDate && (
             <>
               <strong>Expira em:</strong>
@@ -313,7 +304,6 @@ export default function Dashboard() {
             </>
           )}
 
-          {/* 🔥 LINK WHATSAPP - SÓ PARA ASSINANTES ATIVOS */}
           {isActive && (
             <>
               <strong>Conecte-se com a IA:</strong>
@@ -346,7 +336,6 @@ export default function Dashboard() {
             </>
           )}
 
-          {/* Mostra status da renovação automática */}
           {isActive && (
             <>
               <strong>Renovação automática:</strong>
@@ -356,7 +345,6 @@ export default function Dashboard() {
             </>
           )}
 
-          {/* Botão para cancelar renovação (só aparece se estiver ativa e vai renovar) */}
           {isActive && willRenew && (
             <div className="subscription-actions" style={{ marginTop: '1rem' }}>
               <button 
@@ -372,7 +360,6 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* Aviso se renovação foi cancelada */}
           {isActive && !willRenew && (
             <div className="subscription-info" style={{ 
               marginTop: '1rem', 

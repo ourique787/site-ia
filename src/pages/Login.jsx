@@ -27,7 +27,7 @@ export default function Login() {
     try {
       const resp = await fetch("https://projeto-ia-a28p.onrender.com/auth/login", {
         method: "POST",
-        credentials: "include", // para o cookie httpOnly
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
@@ -39,11 +39,8 @@ export default function Login() {
         return;
       }
 
-      // Sucesso → cookie já está setado
-      // 🔄 Notifica o AuthProvider para atualizar o contexto
       window.dispatchEvent(new Event("auth-changed"));
 
-      // Redireciona para a home
       navigate("/", { replace: true });
     } catch (err) {
       console.error("Login error:", err);
@@ -54,7 +51,6 @@ export default function Login() {
   };
 
   return (
-    // ✨ Usando a nova classe para o contêiner de página cheia
     <div className="auth-page-container">
       <form className="auth-form" onSubmit={handleLogin}>
         <h1 className="auth-title">Bem-vindo 👋</h1>

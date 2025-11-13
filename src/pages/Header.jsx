@@ -14,17 +14,14 @@ export default function Header() {
         credentials: "include",
       });
     } catch (e) {
-      // ignore
     }
     if (auth?.setUser) auth.setUser(null);
     window.dispatchEvent(new Event("auth-changed"));
     navigate("/");
   };
 
-  // Verifica se o usuário tem assinatura ativa
   const isSubscribed = auth?.user?.subscriptionStatus === "active";
   
-  // Formata a data de término da assinatura
   const formatEndDate = (date) => {
     if (!date) return null;
     return new Date(date).toLocaleDateString('pt-BR', {
@@ -69,7 +66,6 @@ export default function Header() {
                 Dashboard
               </Link>
               
-              {/* Mostra status da assinatura OU botão de assinar */}
               {isSubscribed ? (
                 <span style={{
                   color: "#4ade80",

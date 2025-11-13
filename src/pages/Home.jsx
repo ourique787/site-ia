@@ -47,7 +47,6 @@ export default function Home() {
     }
   ];
 
-  // Estilos de botão e outros elementos foram extraídos para maior clareza
   const gradientButtonStyle = {
     background: "linear-gradient(135deg, #635bff 0%, #4f46e5 100%)",
     color: "#fff",
@@ -85,30 +84,26 @@ export default function Home() {
   };
 
   return (
-    // CONTÊINER PRINCIPAL - APLICANDO A CORREÇÃO MAIS RÍGIDA
     <div style={{
       minHeight: "100vh",
       background: "linear-gradient(135deg, #0f1724 0%, #1a2332 100%)",
       color: "#fff",
-      // Solução de força total: largura exata da viewport e overflow escondido.
       width: "100vw",
       overflowX: "hidden", 
       margin: 0,
       padding: 0
     }}>
 
-      {/* Hero Section */}
       <main style={{ paddingTop: "60px", paddingBottom: "60px" }}>
         <section style={{
           maxWidth: "1200px",
           margin: "0 auto",
-          padding: "0 20px", // Padding horizontal usado para espaçar o conteúdo interno
+          padding: "0 20px",
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
           gap: "40px",
           alignItems: "center"
         }}>
-          {/* Left Content */}
           <div style={{ maxWidth: "100%", width: "100%" }}>
             <div style={{
               display: "inline-block",
@@ -179,8 +174,6 @@ export default function Home() {
               </Link>
             </div>
 
-
-            {/* Stats */}
             <div style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))",
@@ -203,14 +196,12 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right Content - Phone Mockup */}
           <div style={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center"
           }}>
             <div style={phoneMockupContainerStyle}>
-              {/* Phone Header */}
               <div style={{
                 background: "#25D366",
                 borderRadius: "20px 20px 0 0",
@@ -237,7 +228,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Chat Messages */}
               <div style={{
                 background: "#0f172a",
                 padding: "20px",
@@ -316,7 +306,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Features Section */}
         <section style={{
           maxWidth: "1200px",
           margin: "80px auto 0",
@@ -389,7 +378,6 @@ export default function Home() {
         </section>
       </main>
 
-      {/* Footer */}
       <footer style={{
         borderTop: "1px solid rgba(255, 255, 255, 0.05)",
         padding: "40px 24px",
