@@ -8,6 +8,7 @@ import ResetarSenha from "./pages/ResetarSenha/ResetarSenha.jsx";
 import Login from "./pages/Login";
 import Compra from "./pages/Compra";
 import Dashboard from "./pages/Dashboard";
+import Success from "./pages/Success";
 import Header from "./pages/Header.jsx";
 
 import "./styles/header.css";
@@ -95,6 +96,16 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Rota de sucesso após pagamento Stripe */}
+          <Route
+            path="/success"
+            element={
+              <ProtectedRoute>
+                <Success />
               </ProtectedRoute>
             }
           />

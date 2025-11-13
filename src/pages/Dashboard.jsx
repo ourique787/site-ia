@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import "../styles/dashboard.css"; 
 
 // Lista de países com códigos mais comuns
@@ -28,6 +28,7 @@ export default function Dashboard() {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // form state
   const [name, setName] = useState("");
@@ -115,11 +116,18 @@ export default function Dashboard() {
       }
     }
 
+    // Verifica se há mensagem de sucesso vinda do redirecionamento
+    if (location.state?.message) {
+      setMessage(location.state.message);
+      // Limpa o state para não mostrar a mensagem novamente ao navegar
+      window.history.replaceState({}, document.title);
+    }
+
     loadMe();
     return () => {
       mounted = false;
     };
-  }, [navigate]);
+  }, [navigate, location.state]);
 
   const handleLogout = async () => {
     try {
